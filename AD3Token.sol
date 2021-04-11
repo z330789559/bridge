@@ -11,6 +11,8 @@ interface IERC20 {
     function allowance(address owner, address spender) external view returns (uint);
     function approve(address spender, uint amount) external returns (bool);
     function transferFrom(address sender, address recipient, uint amount) external returns (bool);
+    function withdraw(address recipient, uint amount) external returns (bool);
+    event Transfer(address indexed from, address indexed to, uint value);
     event Approval(address indexed owner, address indexed spender, uint value);
     event Withdraw(address indexed from, address indexed to, uint value);
 }
@@ -132,6 +134,11 @@ contract ERC20 is Context, IERC20 {
         return true;
     }
 
+    function withdraw(address recipient, uint amount) public returns (bool) {
+        _withdraw(_msgSender(), recipient, amount);
+        return true;
+    }
+
     function allowance(address owner, address spender) public view returns (uint) {
         return _allowances[owner][spender];
     }
@@ -148,6 +155,15 @@ contract ERC20 is Context, IERC20 {
     }
 
     function _transfer(address sender, address recipient, uint amount) internal {
+        require(sender != address(0), "ERC20: transfer from the zero address");
+        require(recipient != address(0), "ERC20: transfer to the zero address");
+
+        _balances[sender] = _balances[sender].sub(amount, "ERC20: transfer amount exceeds balance");
+        _balances[recipient] = _balances[recipient].add(amount);
+        emit Transfer(sender, recipient, amount);
+    }
+
+    function _withdraw(address sender, address recipient, uint amount) internal {
         require(sender != address(0), "ERC20: transfer from the zero address");
         require(recipient != address(0), "ERC20: transfer to the zero address");
 
