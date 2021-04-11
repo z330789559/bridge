@@ -31,7 +31,7 @@ async function scanBlock(opts, api, moduleMetadata, admin, web3, contract, block
         // console.log(event);
         switch (event.event) {
             case 'Transfer':
-                // Sending multiple extrinsics with same parameters is no harmed.
+                // Sending multiple extrinsics with the same parameters is no harmed.
                 // But for the sake of speeding up eth scanning, we should check
                 // the existence of `event.transactionHash` in Parami chain.
                 txInParami = await api.query.bridge.erc20Txs(event.transactionHash);
@@ -45,13 +45,13 @@ async function scanBlock(opts, api, moduleMetadata, admin, web3, contract, block
                     await b();
                 }
                 break;
-            case 'Withdraw':
+            case 'Withdraw': // Withdraw(ethAccount, ss58formatAddress, amountOfAD3)
                 txInParami = await api.query.bridge.erc20Txs(event.transactionHash);
                 if (txInParami.isNone) {
                     [a, b] = waitTx(moduleMetadata);
                     await api.tx.bridge.withdraw(
                         event.transactionHash,
-                        event.returnValues.from,
+                        event.returnValues.who,
                         event.returnValues.paramiaddr,
                         event.returnValues.value,
                     ).signAndSend(admin, a);
