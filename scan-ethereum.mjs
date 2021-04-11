@@ -70,6 +70,16 @@ async function scan(opts, from_block) {
     const config = JSON.parse((await fs.readFile(opts.config)).toString());
     const admin = keyring.addFromUri(config.admin);
 
+    const runtimeFilePath = './runtime_data.json';
+    if (from_block === 0) {
+        try {
+            const runtimeData = JSON.parse((await fs.readFile(runtimeFilePath)).toString());
+            from_block = runtimeData.from_block;
+            console.log("continue to scan eth from %s", from_block);
+        } catch (_e) {
+        }
+    }
+
     for (; ;) {
         try {
             // get the newest block number.
@@ -79,6 +89,7 @@ async function scan(opts, from_block) {
             if (from_block <= bestBlockNum - opts.depth) {
                 console.log("bestBlockNum %s, targetBlockNum %s", bestBlockNum, from_block);
                 await scanBlock(opts, api, moduleMetadata, admin, web3, contract, from_block);
+                await fs.writeFile(runtimeFilePath, JSON.stringify({from_block}));
                 from_block++;
             } else {
                 await sleep(200);
