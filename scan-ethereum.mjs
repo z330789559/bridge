@@ -1,7 +1,7 @@
 import {Command} from "commander";
 import {getApi, getModules, waitTx} from "./utils.mjs";
 import {Keyring} from "@polkadot/api";
-import {sleep, jsonInterface} from "./utils.mjs";
+import {sleep} from "./utils.mjs";
 import Web3 from 'web3';
 import {promises as fs} from 'fs';
 
@@ -35,7 +35,7 @@ async function scanBlock(opts, api, moduleMetadata, admin, web3, contract, block
                 // But for the sake of speeding up eth rescanning, we should check
                 // the existence of `event.transactionHash` in Parami chain.
                 txInParami = await api.query.bridge.erc20Txs(event.transactionHash);
-                if (txInParami.isNone && event.returnValues.to === opts.ethHotWallet) {
+                if (txInParami.isNone && event.returnValues.to.toLowerCase() === opts.ethHotWallet.toLowerCase()) {
                     [a, b] = waitTx(moduleMetadata);
                     await api.tx.bridge.transfer(
                         event.transactionHash,
@@ -70,7 +70,7 @@ async function scanBlock(opts, api, moduleMetadata, admin, web3, contract, block
 async function scan(opts, from_block) {
     const web3 = new Web3(opts.web3url);
     // web3.eth.transactionConfirmationBlocks = 50;
-    const contract = new web3.eth.Contract(jsonInterface, opts.contract);
+    const contract = new web3.eth.Contract(JSON.parse((await fs.readFile('ad3/abis/ad3.json')).toString()), opts.contract);
     opts.depth = Number(opts.depth);
 
     let api = await getApi(opts.parami);
