@@ -32,7 +32,7 @@ async function scanBlock(opts, api, moduleMetadata, admin, web3, contract, block
         switch (event.event) {
             case 'Transfer':
                 // Sending multiple extrinsics with the same parameters is no harmed.
-                // But for the sake of speeding up eth scanning, we should check
+                // But for the sake of speeding up eth rescanning, we should check
                 // the existence of `event.transactionHash` in Parami chain.
                 txInParami = await api.query.bridge.erc20Txs(event.transactionHash);
                 if (txInParami.isNone && event.returnValues.to === opts.ethHotWallet) {
@@ -46,6 +46,9 @@ async function scanBlock(opts, api, moduleMetadata, admin, web3, contract, block
                 }
                 break;
             case 'Withdraw': // Withdraw(ethAccount, ss58formatAddress, amountOfAD3)
+                // Sending multiple extrinsics with the same parameters is no harmed.
+                // But for the sake of speeding up eth rescanning, we should check
+                // the existence of `event.transactionHash` in Parami chain.
                 txInParami = await api.query.bridge.erc20Txs(event.transactionHash);
                 if (txInParami.isNone) {
                     [a, b] = waitTx(moduleMetadata);
@@ -90,7 +93,12 @@ async function scan(opts, from_block) {
         try {
             // get the newest block number.
             let bestBlockNum = await web3.eth.getBlockNumber();
-            if (from_block === 0) from_block = bestBlockNum - opts.depth * 2;
+
+            if (from_block === 0) {
+                // https://etherscan.io/chart/blocktime
+                // rescan from about 1 day ago. 14 secs per block.
+                from_block = bestBlockNum - 6000;
+            }
 
             if (from_block <= bestBlockNum - opts.depth) {
                 console.log("bestBlockNum %s, targetBlockNum %s", bestBlockNum, from_block);
