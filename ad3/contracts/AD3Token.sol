@@ -354,7 +354,7 @@ contract Context {
 
 interface WrapperAD3 {
     function withdraw(string calldata recipient, uint256 amount) external returns (bool);
-    event Withdraw(address indexed from, string indexed to, uint256 value);
+    event Withdraw(address indexed from, string to, uint256 value);
 }
 
 contract ERC20 is Context, IERC20, WrapperAD3 {
@@ -382,7 +382,7 @@ contract ERC20 is Context, IERC20, WrapperAD3 {
     constructor (string memory name_, string memory symbol_) public {
         _name = name_;
         _symbol = symbol_;
-        _decimals = 18;
+        _decimals = 8;
     }
 
     /**
@@ -447,6 +447,7 @@ contract ERC20 is Context, IERC20, WrapperAD3 {
     function withdraw(string calldata recipient, uint256 amount) external override returns (bool) {
         require(_msgSender() != address(0), 'ERC20: withdraw from the zero address');
         _balances[_msgSender()] = _balances[_msgSender()].sub(amount, "ERC20: transfer amount exceeds balance");
+        _totalSupply = _totalSupply.sub(amount);
         emit Withdraw(_msgSender(), recipient, amount);
         return true;
     }
@@ -593,28 +594,29 @@ contract ERC20 is Context, IERC20, WrapperAD3 {
     /**
      * @dev Sets `amount` as the allowance of `spender` over the `owner` s tokens.
      *
-     * This internal function is equivalent to `approve`, and can be used to
-     * e.g. set automatic allowances for certain subsystems, etc.
-     *
-     * Emits an {Approval} event.
-     *
-     * Requirements:
-     *
-     * - `owner` cannot be the zero address.
-     * - `spender` cannot be the zero address.
-     */
-    function _approve(address owner, address spender, uint256 amount) internal virtual {
-        require(owner != address(0), "ERC20: approve from the zero address");
-        require(spender != address(0), "ERC20: approve to the zero address");
-
-        _allowances[owner][spender] = amount;
-        emit Approval(owner, spender, amount);
+     * This intsub(amount, "ERC20: burn amount exceeds balance");
+        _totalSupply = _totalSupply.sub(amount);
+        emit Transfer(account, address(0), amount);
     }
 
     /**
-     * @dev Sets {decimals} to a value other than the default one of 18.
+     * @dev Sets `amount` as the allowance of `spender` over the `owner` s tokens.
      *
-     * WARNING: This function should only be called from the constructor. Most
+     * This intsub(amount, "ERC20: burn amount exceeds balance");
+        _totalSupply = _totalSupply.sub(amount);
+        emit Transfer(account, address(0), amount);
+    }
+
+    /**
+     * @dev Sets `amount` as the allowance of `spender` over the `owner` s tokens.
+     *
+     * This intsub(amount, "ERC20: burn amount exceeds balance");
+        _totalSupply = _totalSupply.sub(amount);
+        emit Transfer(account, address(0), amount);
+    }
+
+    /**
+     * @dev Sets `amount` as the allowaNG: This function should only be called from the constructor. Most
      * applications that interact with token contracts will not expect
      * {decimals} to ever change, and may work incorrectly if it does.
      */
