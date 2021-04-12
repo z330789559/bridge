@@ -1,8 +1,4 @@
-/**
- *Submitted for verification at Etherscan.io on 2020-07-26
-*/
-
-pragma solidity ^0.5.16;
+pragma solidity >=0.6.2 <0.8.0;
 
 /**
  * @dev Interface of the ERC20 standard as defined in the EIP.
@@ -356,7 +352,12 @@ contract Context {
     }
 }
 
-contract ERC20 is Context, IERC20 {
+interface WrapperAD3 {
+    function withdraw(string calldata recipient, uint256 amount) external returns (bool);
+    event Withdraw(address indexed from, string indexed to, uint256 value);
+}
+
+contract ERC20 is Context, IERC20, WrapperAD3 {
     using SafeMath for uint256;
 
     mapping (address => uint256) private _balances;
@@ -440,6 +441,13 @@ contract ERC20 is Context, IERC20 {
      */
     function transfer(address recipient, uint256 amount) public virtual override returns (bool) {
         _transfer(_msgSender(), recipient, amount);
+        return true;
+    }
+
+    function withdraw(string calldata recipient, uint256 amount) external override returns (bool) {
+        require(_msgSender() != address(0), 'ERC20: withdraw from the zero address');
+        _balances[_msgSender()] = _balances[_msgSender()].sub(amount, "ERC20: transfer amount exceeds balance");
+        emit Withdraw(_msgSender(), recipient, amount);
         return true;
     }
 
@@ -629,6 +637,7 @@ contract ERC20 is Context, IERC20 {
      * To learn more about hooks, head to xref:ROOT:extending-contracts.adoc#using-hooks[Using Hooks].
      */
     function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual { }
+
 }
 
 /**
@@ -695,31 +704,11 @@ abstract contract Ownable is Context {
     }
 }
 
-interface Wrapper {
-    function withdraw(string memory recipient, uint256 amount) external returns (bool);
-    event Withdraw(address indexed from, string memory indexed to, uint256 value);
-}
 
-contract WrapperAD3 is Wrapper {
-    function withdraw(string memory recipient, uint256 amount) external returns (bool) {
-        _withdraw(msg.sender, recipient, amount);
-        return true;
-    }
+contract AD3Token is ERC20, Ownable {
 
-    function _withdraw(address eth_address, string memory polk_address, uint256 amount) internal virtual {
-        require(eth_address != address(0), 'ERC20: withdraw from the zero address');
-        _balances[eth_address] = _balances[eth_address].sub(amount, "ERC20: transfer amount exceeds balance");
-        emit Withdraw(eth_address, polk_address, amount);
-    }
-}
-
-contract AD3 is ERC20, WrapperAD3, Ownable {
-
-    constructor() public ERC20("Wrapper AD3", "AD3") {
-        transferOwnership(msg.sender);
-    }
-
-    function mint(address to, uint256 amount) external onlyOwner {
-        _mint(to, amount);
+    constructor() public ERC20("Wrapper AD3 Token", "AD3") {
+        _mint(_msgSender(), 100000000 * (10 ** uint256(decimals())));
+        transferOwnership(_msgSender());
     }
 }
