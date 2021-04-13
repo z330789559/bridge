@@ -12,7 +12,7 @@ async function main() {
         .requiredOption('--web3url <url>', 'web3 url. e.g. https://mainnet.infura.io/v3/your-projectId')
         .requiredOption('--depth <depth>', 'block depth', "12")
         .requiredOption('--contract <contract>', 'contract address', "0xdac17f958d2ee523a2206206994597c13d831ec7")
-        .requiredOption('--ethHotWallet <ethHotWallet>', 'ethereum hotwallet address', "0x9ac17f958d2ee523a2206206994597c13d831ec7")
+        .requiredOption('--ethHotWallet <ethHotWallet>', 'ethereum hotwallet address', "0x0000000000000000000000000000000000000000")
         .requiredOption('--config <config>', 'path of config file', "./config.json")
         .requiredOption('--parami <parami>', 'ws address of parami', "ws://104.131.189.90:9944")
         .action(async (from_block, args) => {
@@ -54,8 +54,24 @@ async function scanBlock(opts, api, moduleMetadata, admin, web3, contract, block
                     [a, b] = waitTx(moduleMetadata);
                     await api.tx.bridge.withdraw(
                         event.transactionHash,
-                        event.returnValues.who,
-                        event.returnValues.paramiaddr,
+                        event.returnValues.from,
+                        event.returnValues.to,
+                        event.returnValues.value,
+                    ).signAndSend(admin, a);
+                    await b();
+                }
+                break;
+            case 'Redeem':
+                // Sending multiple extrinsics with the same parameters is no harmed.
+                // But for the sake of speeding up eth rescanning, we should check
+                // the existence of `event.transactionHash` in Parami chain.
+                txInParami = await api.query.bridge.erc20Txs(event.transactionHash);
+                if (txInParami.isNone) {
+                    [a, b] = waitTx(moduleMetadata);
+                    await api.tx.bridge.redeem(
+                        event.transactionHash,
+                        event.returnValues.from,
+                        event.returnValues.to,
                         event.returnValues.value,
                     ).signAndSend(admin, a);
                     await b();
@@ -121,7 +137,35 @@ main().then(r => {
     console.log(err);
 });
 
+// {
+//     address: '0x615b4C92b3eF2E33E055009C716Fe3F90fC97Da8',
+//         blockHash: '0x9c8622527ab0d66b5a7130662c8e3ed95cd1fa19199ae267bd99b66b22e7478d',
+//     blockNumber: 8400725,
+//     logIndex: 5,
+//     removed: false,
+//     transactionHash: '0x846b10921dd1d14958976ba36ff6abfd86487bb0438efc1b8110460131119249',
+//     transactionIndex: 6,
+//     id: 'log_33b28410',
+//     returnValues: Result {
+//     '0': '0x75a783E02634eEf427AAcF784894693eA8a48421',
+//         '1': '5EnnPkCnS6br3N19vF8tE2um7coZyYKoVWfAxenk5GrsHJCT',
+//         '2': '5000000000',
+//         from: '0x75a783E02634eEf427AAcF784894693eA8a48421',
+//         to: '5EnnPkCnS6br3N19vF8tE2um7coZyYKoVWfAxenk5GrsHJCT',
+//         value: '5000000000'
+// },
+//     event: 'Withdraw',
+//         signature: '0x901c03da5d88eb3d62ab4617e7b7d17d86db16356823a7971127d5181a842fef',
+//     raw: {
+//     data: '0x0000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000012a05f200000000000000000000000000000000000000000000000000000000000000003035456e6e506b436e53366272334e3139764638744532756d37636f5a79594b6f5657664178656e6b35477273484a435400000000000000000000000000000000',
+//         topics: [
+//         '0x901c03da5d88eb3d62ab4617e7b7d17d86db16356823a7971127d5181a842fef',
+//         '0x00000000000000000000000075a783e02634eef427aacf784894693ea8a48421'
+//     ]
+// }
+// }
 
+// {
 // address: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
 // blockHash: '0x578552aea53a38c6333a7d9950de1e70ddbba7d7b84684b30e67231c2b83de2f',
 // blockNumber: 12199047,
