@@ -29,7 +29,20 @@ async function main() {
         await withdraw(program.opts().ws, keyring, admin, hash, eth_addr, parami_addr, value);
     });
 
+    program.command('redeem <admin> <hash> <eth_addr> <parami_addr> <value>').action(async (admin, hash, eth_addr, parami_addr, value) => {
+        await redeem(program.opts().ws, keyring, admin, hash, eth_addr, parami_addr, value);
+    });
+
     await program.parseAsync(process.argv);
+}
+
+async function redeem(ws, keyring, admin, hash, eth_addr, parami_addr, value) {
+    let api = await getApi(ws);
+    let moduleMetadata = await getModules(api);
+    admin = keyring.addFromUri(admin);
+    let [a, b] = waitTx(moduleMetadata);
+    await api.tx.bridge.redeem(hash, eth_addr, parami_addr, bnToBn(value).mul(unit)).signAndSend(admin, a);
+    await b();
 }
 
 async function withdraw(ws, keyring, admin, hash, eth_addr, parami_addr, value) {
