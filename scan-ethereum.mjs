@@ -36,13 +36,13 @@ async function scanBlock(opts, api, moduleMetadata, admin, web3, contract, block
                 // the existence of `event.transactionHash` in Parami chain.
                 txInParami = await api.query.bridge.erc20Txs(event.transactionHash);
                 if (txInParami.isNone && event.returnValues.to.toLowerCase() === opts.ethHotWallet.toLowerCase()) {
-                    [a, b] = waitTx(moduleMetadata);
-                    await api.tx.bridge.transfer(
-                        event.transactionHash,
-                        event.returnValues.from,
-                        event.returnValues.value,
-                    ).signAndSend(admin, a);
-                    await b();
+                    // [a, b] = waitTx(moduleMetadata);
+                    // await api.tx.bridge.transfer(
+                    //     event.transactionHash,
+                    //     event.returnValues.from,
+                    //     event.returnValues.value,
+                    // ).signAndSend(admin, a);
+                    // await b();
                 }
                 break;
             case 'Withdraw': // Withdraw(ethAccount, ss58formatAddress, amountOfAD3)
@@ -51,14 +51,14 @@ async function scanBlock(opts, api, moduleMetadata, admin, web3, contract, block
                 // the existence of `event.transactionHash` in Parami chain.
                 txInParami = await api.query.bridge.erc20Txs(event.transactionHash);
                 if (txInParami.isNone) {
-                    [a, b] = waitTx(moduleMetadata);
-                    await api.tx.bridge.withdraw(
-                        event.transactionHash,
-                        event.returnValues.from,
-                        event.returnValues.to,
-                        event.returnValues.value,
-                    ).signAndSend(admin, a);
-                    await b();
+                    // [a, b] = waitTx(moduleMetadata);
+                    // await api.tx.bridge.withdraw(
+                    //     event.transactionHash,
+                    //     event.returnValues.from,
+                    //     event.returnValues.to,
+                    //     event.returnValues.value,
+                    // ).signAndSend(admin, a);
+                    // await b();
                 }
                 break;
             case 'Redeem':
