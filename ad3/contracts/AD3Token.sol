@@ -382,7 +382,7 @@ contract ERC20 is Context, IERC20, WrapperAD3 {
     constructor (string memory name_, string memory symbol_) public {
         _name = name_;
         _symbol = symbol_;
-        _decimals = 8;
+        _decimals = 15;
     }
 
     /**
@@ -712,16 +712,8 @@ contract AD3Token is ERC20, Ownable {
         _mint(_msgSender(), 100000000 * (10 ** uint256(decimals())));
         transferOwnership(_msgSender());
     }
-    
+
     function mint(address to, uint256 amount) external onlyOwner {
         _mint(to, amount);
     }
 }
-
-
-
-
-
-
-
-
