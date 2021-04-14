@@ -7,7 +7,7 @@ function main() {
 	const ss58Format = 42;
 	const keyring = new Keyring({type: 'sr25519', ss58Format});
 	const program = new Command();
-	program.option('--ws <port>', 'node ws addr', 'ws://localhost:9944');
+	program.option('--ws <port>', 'node ws addr', 'ws://104.131.189.90:6969');
 
 	program.command('transfer <from> <to>').action(async (from, to) => {
 		await demo_transfer(program.opts().ws, keyring, from, to);

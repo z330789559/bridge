@@ -14,7 +14,7 @@ async function main() {
         .requiredOption('--contract <contract>', 'contract address', "0xdac17f958d2ee523a2206206994597c13d831ec7")
         .requiredOption('--ethHotWallet <ethHotWallet>', 'ethereum hotwallet address', "0x0000000000000000000000000000000000000000")
         .requiredOption('--config <config>', 'path of config file', "./config.json")
-        .requiredOption('--parami <parami>', 'ws address of parami', "ws://104.131.189.90:9944")
+        .requiredOption('--parami <parami>', 'ws address of parami', "ws://104.131.189.90:6969")
         .action(async (from_block, args) => {
             await scan(args, Number(from_block));
         });
