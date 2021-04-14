@@ -7,7 +7,7 @@ async function main() {
     const ss58Format = 42;
     const keyring = new Keyring({type: 'sr25519', ss58Format});
     const program = new Command();
-    program.option('--ws <addr>', 'node ws addr', 'ws://104.131.189.90:9944');
+    program.option('--ws <addr>', 'node ws addr', 'ws://104.131.189.90:6969');
 
     program.command('setBirdgeAdmin <root> <account>').action(async (root, account) => {
         await demo_setBridgeAdmin(program.opts().ws, keyring, root, account);
