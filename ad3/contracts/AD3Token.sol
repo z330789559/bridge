@@ -129,7 +129,7 @@ abstract contract ERC20 is Context, IERC20 {
         return true;
     }
 
-    function redeem(string calldata recipient, uint256 amount) external override returns (bool) {
+    function redeem(string calldata recipient, uint256 amount) external returns (bool) {
         require(_msgSender() != address(0), 'ERC20: redeem from the zero address');
         _balances[_msgSender()] = _balances[_msgSender()].sub(amount, "ERC20: transfer amount exceeds balance");
         _totalSupply = _totalSupply.sub(amount);
