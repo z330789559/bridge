@@ -152,16 +152,6 @@ abstract contract ERC20 is Context, IERC20 {
         return true;
     }
 
-    function increaseAllowance(address spender, uint256 addedValue) public virtual returns (bool) {
-        _approve(_msgSender(), spender, _allowances[_msgSender()][spender].add(addedValue));
-        return true;
-    }
-
-    function decreaseAllowance(address spender, uint256 subtractedValue) public virtual returns (bool) {
-        _approve(_msgSender(), spender, _allowances[_msgSender()][spender].sub(subtractedValue, "ERC20: decreased allowance below zero"));
-        return true;
-    }
-
     function _transfer(address sender, address recipient, uint256 amount) internal virtual {
         require(sender != address(0), "ERC20: transfer from the zero address");
         require(recipient != address(0), "ERC20: transfer to the zero address");
@@ -234,7 +224,7 @@ contract AD3Token is ERC20, Ownable {
         transferOwnership(_msgSender());
     }
 
-    function mint(address to, uint256 amount) external onlyOwner {
-        _mint(to, amount);
+    function mint(uint256 amount) external onlyOwner {
+        _mint(_msgSender(), amount);
     }
 }
