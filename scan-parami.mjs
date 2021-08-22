@@ -114,7 +114,6 @@ async function scan(opts, from_block) {
         }
     }
 let tx=undefined;
-txs.push(new BridgeTx("0x9f883b12fd0692714c2f28be6c40d3afdb9081d3",'10000000000000000000',"22",'5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY'))
     for (; ;) {
        
         try {
