@@ -48,8 +48,11 @@ export function waitTx(moduleMetadata) {
 								console.log("event: " + phase.toString() + ' ' + section + '.' + method + ' ' + data.toString());
 							}
 						}
-					} else {
-						console.log("event: " + phase.toString() + ' ' + section + '.' + method + ' ' + data.toString());
+					} else if("bridge.Desposit" === section + '.' + method){
+						console.log("event0: " + phase.toString() + ' --' + section + '.' + method + ' ' + data.toString());
+					}else {
+
+						console.log("event1: " + phase.toString() + ' --' + section + '.' + method + ' ' + data.toString());
 					}
 				});
 				signal = true;
@@ -121,6 +124,7 @@ export async function getApi(dest) {
 				"AGENT"
 			]
 		},
+		"ResourceId": "AccountId",
 		"AdsMetadata":{
 			"advertiser":"Vec<u8>",
 			"topic":"Vec<u8>",
@@ -188,11 +192,18 @@ export async function getApi(dest) {
 			"from": "Vec<u8>",
 			"to": "AccountId"
 		},
+		"Erc20EventDesposit":{
+			"from": "Vec<u8>",
+			"to": "AccountId",
+			"value": "Compact<Balance>"
+	
+		},
 		"Erc20Event": {
 			"_enum": {
 				"Transfer": "Erc20EventTransfer",
 				"Withdraw": "Erc20EventWithdraw",
-				"Redeem": "Erc20EventRedeem"
+				"Redeem": "Erc20EventRedeem",
+				"Desposit": "Erc20EventDesposit"
 			}
 		}
 	};
