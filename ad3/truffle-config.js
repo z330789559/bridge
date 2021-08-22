@@ -51,11 +51,11 @@ module.exports = {
       network_id: "*",       // Any network (default: none)
      },
      rinkeby: {
-      provider: new HDWalletProvider(secrets.mnemonic, "https://rinkeby.infura.io/v3/53c188b0e4994730a768a3082a9dd469"),
+      provider: new HDWalletProvider("8af1d44de729c5ce7627470c13fda1b09f962c9313bb87059a07f856da76a4c9", "https://rinkeby.infura.io/v3/7307908c50f44d578fd7470e6df7921e"),
       network_id: '4'
      },
     // Another network with more advanced options...
-    // advanced: {
+    // advanced: {d
     // port: 8777,             // Custom port
     // network_id: 1342,       // Custom network
     // gas: 8500000,           // Gas sent with each transaction (default: ~6700000)
@@ -89,7 +89,7 @@ module.exports = {
   // Configure your compilers
   compilers: {
     solc: {
-       version: "0.6.2",    // Fetch exact version from solc-bin (default: truffle's version)
+       version: "0.7.6",    // Fetch exact version from solc-bin (default: truffle's version)
       // docker: true,        // Use "0.5.1" you've installed locally with docker (default: false)
       // settings: {          // See the solidity docs for advice about optimization and evmVersion
       //  optimizer: {
