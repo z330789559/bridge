@@ -4,7 +4,7 @@ const Web3=require('web3');
 
 opts={
     web3url:"https://rinkeby.infura.io/v3/7307908c50f44d578fd7470e6df7921e",
-    contractAddress:"0x850068f1181d4ac37a78f4b52c060c452b7cedc7",
+    contractAddress:"0x26CA6837dB92a907462443999f1B48F54e523385",
     address:"0x9F883b12fD0692714C2f28be6C40d3aFdb9081D3",
     privateKey:"8af1d44de729c5ce7627470c13fda1b09f962c9313bb87059a07f856da76a4c9"
 }

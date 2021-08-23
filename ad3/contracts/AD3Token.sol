@@ -218,18 +218,16 @@ abstract contract Ownable is Context {
 
 contract AD3Token is ERC20, Ownable {
 
-     mapping(string => mapping(uint256 => uint256)) private mintNonces;
+     mapping(uint256 => mapping(uint256 => bool)) private mintNonces;
 
     constructor() ERC20("Parami Protocol Token", "AD3") {
         _mint(_msgSender(), 100000000 * (10 ** uint256(decimals())));
         transferOwnership(_msgSender());
     }
 
-    function mint(address to,uint256 amount,uint256 mintNonce, string memory paramAddres) external payable onlyOwner {
-        if(uint(mintNonces[paramAddres][mintNonce]) > 0){
-                   require(mintNonces[paramAddres][mintNonce] + 10 < block.number,"repeat call");
-        }
+    function mint(address to,uint256 amount,uint256 index, uint256  blockHeight) external payable onlyOwner {
+        require(!bool(mintNonces[blockHeight][index]),"repeat call");
          _mint(to, amount);
-         mintNonces[paramAddres][mintNonce] = block.number;
+         mintNonces[blockHeight][index] = true;
     }
 }
