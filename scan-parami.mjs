@@ -1,12 +1,12 @@
 import {Command} from "commander";
 import {getApi, getModules, waitTx} from "./utils.mjs";
-import {Keyring} from "@polkadot/api";
 import {sleep} from "./utils.mjs";
 import Web3 from 'web3';
 import {promises as fs} from 'fs';
 
 let txs = []
 
+//交易对象
 class BridgeTx {
 
     constructor(ethAddress, amount, index, blockNum) {
@@ -24,7 +24,6 @@ class BridgeTx {
 }
 
 async function main() {
-// https://github.com/tj/commander.js/
     const program = new Command();
     program.command('scan <from_block>')
         .requiredOption('--web3url <url>', 'web3 url. e.g. https://mainnet.infura.io/v3/your-projectId')
@@ -39,37 +38,23 @@ async function main() {
         });
     await program.parseAsync(process.argv);
 }
-
-async function scanBlock(opts, api, blockNum) {
-
-// https://blockchain.oodles.io/dev-blog/event-listeners-in-web3-js/
-// const a = await contract.methods.balanceOf("0x47ac0fb4f2d84898e4d9e7b4dab3c24507a6d503").call();
-// let events = await contract.getPastEvents({filter: {}, fromBlock: blockNum, toBlock: blockNum});
-
-
-// no blockHash is specified, so we retrieve the latest
-
+/** 
+ *  scan block 
+ * @param opts 
+ * @param api 
+ * @param blockNum 
+ */
+let scanBlock = async function scanBlock(api) {
 
     const blockHash = await api.rpc.chain.getFinalizedHead();
     const signedBlock = await api.rpc.chain.getBlock(blockHash);
-    ;
+
     console.log("blockHash", blockHash.toString(), "signedBlock", JSON.stringify(signedBlock.block.header.number))
 
-
-// the information for each of the contained extrinsics
     signedBlock.block.extrinsics.forEach((ex, index) => {
-// the extrinsics are decoded by the API, human-like view
-//   console.log(index, ex.toHuman());
 
-        const {isSigned, meta, method: {args, method, section}} = ex;
-
-// explicit display of name, args & documentation
-//   console.log(`${section}.${method}(${args.map((a) => a.toString()).join(', ')})`);
-//   console.log(meta.documentation.map((d) => d.toString()).join('\n'));
-
-// signer/nonce info
+   const {isSigned, method: {args, method, section}} = ex;
         if (isSigned && "bridge.desposit" === section + "." + method) {
-
             console.log(`signer=${ex.signer.toString()}, nonce=${ex.nonce.toString()}   ${args[0]}   ${args[1]}`);
             txs.push(new BridgeTx(args[0].toString(), args[1].toString(), index, signedBlock.block.header.number.toString()))
         }
@@ -77,23 +62,18 @@ async function scanBlock(opts, api, blockNum) {
 
 }
 
-async function sendTx(tx, contract, contractAddress, address, privateKey, web3) {
+let sendTx=async function (tx, contract, contractAddress, address, privateKey, web3) {
 
-    console.log("call", tx, address, privateKey)
     const rawTx = {
-// this could be provider.addresses[0] if it exists
         "from": address,
         "to": contractAddress,
-// target address, this could be a smart contract address
         "gasPrice": 4500000000,
         "gas": web3.utils.toHex("519990"),
         "gasLimit": web3.utils.toHex("519990"),
         "value": "0x0",
-// this encodes the ABI of the method and the arguements
         "data": contract.methods.mint(tx.ethAddress, web3.utils.toHex(tx.amount), web3.utils.toHex(tx.index), web3.utils.toHex(tx.blockNum)).encodeABI(),
         "chainId": 0x04
     };
-
 
     const signedTx = await web3.eth.accounts.signTransaction(rawTx, privateKey)
     console.log(signedTx.rawTransaction)
@@ -109,9 +89,6 @@ async function scan(opts, from_block) {
     opts.depth = Number(opts.depth);
 
     let api = await getApi(opts.parami);
-// let moduleMetadata = await getModules(api);
-// const config = JSON.parse((await fs.readFile(opts.config)).toString());
-// const admin = keyring.addFromUri(config.admin);
 
     const runtimeFilePath = './runtime_param_data.json';
     if (from_block === 0) {
@@ -126,13 +103,11 @@ async function scan(opts, from_block) {
     for (; ;) {
 
         try {
-// get the newest block number.
             const header = await api.rpc.chain.getHeader();
             let bestBlockNum = header.number.toString()
 
             if (from_block === 0) {
-// https://etherscan.io/chart/blocktime
-// rescan from about 1 day ago. 14 secs per block.
+
                 from_block = bestBlockNum > 1000 ? bestBlockNum - 1000 : 0;
             }
             try {
