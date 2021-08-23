@@ -192,13 +192,13 @@
 			},
 			{
 				"internalType": "uint256",
-				"name": "mintNonce",
+				"name": "index",
 				"type": "uint256"
 			},
 			{
-				"internalType": "string",
-				"name": "paramAddres",
-				"type": "string"
+				"internalType": "uint256",
+				"name": "blockHeight",
+				"type": "uint256"
 			}
 		],
 		"name": "mint",
