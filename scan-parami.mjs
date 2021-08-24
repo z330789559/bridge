@@ -81,8 +81,8 @@ let sendTx=async function (tx, contract, contractAddress, address, privateKey, w
     console.log(res)
 
 }
-
-async function scan(opts, from_block) {
+let from_block=0;
+async function scan(opts) {
     const web3 = new Web3(opts.web3url);
 // web3.eth.transactionConfirmationBlocks = 50;
     const contract = new web3.eth.Contract(JSON.parse((await fs.readFile('ad3/abis/ad3.json')).toString()), opts.contract);
@@ -90,26 +90,17 @@ async function scan(opts, from_block) {
 
     let api = await getApi(opts.parami);
 
-    const runtimeFilePath = './runtime_param_data.json';
-    if (from_block === 0) {
-        try {
-            const runtimeData = JSON.parse((await fs.readFile(runtimeFilePath)).toString());
-            from_block = runtimeData.from_block;
-            console.log("continue to scan eth from %s", from_block);
-        } catch (_e) {
-        }
-    }
     let tx = undefined;
+ 
     for (; ;) {
 
         try {
-            const header = await api.rpc.chain.getHeader();
-            let bestBlockNum = header.number.toString()
-
-            if (from_block === 0) {
-
-                from_block = bestBlockNum > 1000 ? bestBlockNum - 1000 : 0;
-            }
+             const blockHash = await api.rpc.chain.getFinalizedHead();
+             const header =  await api.rpc.chain.getHeader(blockHash)
+             let bestBlockNum = header.number.toString()
+                if (bestBlockNum-from_block >1){
+                    from_block=bestBlockNum;
+                };
             try {
                 while (tx = txs.shift()) {
                     sendTx(tx, contract, opts.contract, opts.ethHotWallet, opts.pk, web3, (data) => {
@@ -119,15 +110,14 @@ async function scan(opts, from_block) {
             } catch (e) {
                 console.log("fail", tx, contract, opts.contract, opts.ethHotWallet, opts.pk, web3);
             }
-            console.log("bestBlockNum %s, targetBlockNum %s", bestBlockNum, from_block);
-            if (from_block < bestBlockNum) {
-
-                await scanBlock(opts, api, from_block);
-                await fs.writeFile(runtimeFilePath, JSON.stringify({from_block}));
-                from_block++;
-            } else {
-                await sleep(500);
-            }
+            console.log("..",from_block,bestBlockNum)
+           if(from_block <=bestBlockNum){
+            await scanBlock(api);
+      
+            from_block++;
+           }else{
+            await sleep(500);
+           }
         } catch (e) {
             console.log(e);
             await sleep(2000)
