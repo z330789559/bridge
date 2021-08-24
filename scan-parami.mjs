@@ -32,7 +32,7 @@ async function main() {
         .requiredOption('--ethHotWallet <ethHotWallet>', 'ethereum hotwallet address', "0x9F883b12fD0692714C2f28be6C40d3aFdb9081D3")
         .requiredOption('--config <config>', 'path of config file', "./config.json")
         .requiredOption('--parami <parami>', 'ws address of parami', "ws://104.131.189.90:6969")
-        .requiredOption('--pk <key>', 'eth contract admin private key', "8af1d44de729c5ce7627470c13fda1b09f962c9313bb87059a07f856da76a4c9")
+        .requiredOption('--pk <privateKey>', 'eth contract admin private key', "8af1d44de729c5ce7627470c13fda1b09f962c9313bb87059a07f856da76a4c9")
         .action(async (from_block, args) => {
             await scan(args, Number(from_block));
         });
@@ -63,12 +63,11 @@ let scanBlock = async function scanBlock(api) {
 }
 
 let sendTx=async function (tx, contract, contractAddress, address, privateKey, web3) {
-
+    let gasprice =await web3.eth.getGasPrice();
     const rawTx = {
         "from": address,
         "to": contractAddress,
-        "gasPrice": 4500000000,
-        "gas": web3.utils.toHex("519990"),
+        "gasPrice": gasprice,
         "gasLimit": web3.utils.toHex("519990"),
         "value": "0x0",
         "data": contract.methods.mint(tx.ethAddress, web3.utils.toHex(tx.amount), web3.utils.toHex(tx.index), web3.utils.toHex(tx.blockNum)).encodeABI(),
@@ -83,6 +82,7 @@ let sendTx=async function (tx, contract, contractAddress, address, privateKey, w
 }
 let from_block=0;
 async function scan(opts) {
+    console.log(opts)
     const web3 = new Web3(opts.web3url);
 // web3.eth.transactionConfirmationBlocks = 50;
     const contract = new web3.eth.Contract(JSON.parse((await fs.readFile('ad3/abis/ad3.json')).toString()), opts.contract);
