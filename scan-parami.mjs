@@ -27,12 +27,11 @@ async function main() {
     const program = new Command();
     program.command('scan <from_block>')
         .requiredOption('--web3url <url>', 'web3 url. e.g. https://mainnet.infura.io/v3/your-projectId')
-        .requiredOption('--depth <depth>', 'block depth', "12")
-        .requiredOption('--contract <contract>', 'contract address', "0xdac17f958d2ee523a2206206994597c13d831ec7")
-        .requiredOption('--ethHotWallet <ethHotWallet>', 'ethereum hotwallet address', "0x9F883b12fD0692714C2f28be6C40d3aFdb9081D3")
+        .requiredOption('--contract <contract>', 'contract address', "contract address")
+        .requiredOption('--ethHotWallet <ethHotWallet>', 'ethereum hotwallet address', "your contract admin address")
         .requiredOption('--config <config>', 'path of config file', "./config.json")
-        .requiredOption('--parami <parami>', 'ws address of parami', "ws://104.131.189.90:6969")
-        .requiredOption('--pk <privateKey>', 'eth contract admin private key', "8af1d44de729c5ce7627470c13fda1b09f962c9313bb87059a07f856da76a4c9")
+        .requiredOption('--parami <parami>', 'ws address of parami', "parami address")
+        .requiredOption('--pk <privateKey>', 'eth contract admin private key', "your contract admin private key")
         .action(async (from_block, args) => {
             await scan(args, Number(from_block));
         });
@@ -71,7 +70,7 @@ let sendTx=async function (tx, contract, contractAddress, address, privateKey, w
         "gasLimit": web3.utils.toHex("519990"),
         "value": "0x0",
         "data": contract.methods.mint(tx.ethAddress, web3.utils.toHex(tx.amount), web3.utils.toHex(tx.index), web3.utils.toHex(tx.blockNum)).encodeABI(),
-        "chainId": 0x04
+        "chainId": 0x04  //need modify by actual env
     };
 
     const signedTx = await web3.eth.accounts.signTransaction(rawTx, privateKey)

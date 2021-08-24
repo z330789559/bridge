@@ -13,17 +13,17 @@ A simple centralized bridge to transfer AD3 erc20 assets from Ethereum to Parami
 
 ## run step
 ### config 
-#### open env_var env file
+#### config evn var
 //eth node
-web3url=https://rinkeby.infura.io/v3/7307908c50f44d578fd7470e6df7921e 
+web3url=https://xxxxxx
 //parami node
-parami=ws://127.0.0.1:9944
+parami=ws://xxxxx
 //eth ad3 contract 
-contract=0xB6B6616C658eF743b486369a10Eb257b8f1F8f78
+contract=xxxx
 //eth contract admin address
-ethHotWallet=0x9F883b12fD0692714C2f28be6C40d3aFdb9081D3
+ethHotWallet=xxxx
 //eth contract admin private
-key=8af1d44de729c5ce7627470c13fda1b09f962c9313bb87059a07f856da76a4c9
+privateKey=xxx
 
 ### start apply
 sh startBridge.sh
