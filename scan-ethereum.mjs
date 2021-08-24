@@ -11,10 +11,10 @@ async function main() {
     program.command('scan <from_block>')
         .requiredOption('--web3url <url>', 'web3 url. e.g. https://mainnet.infura.io/v3/your-projectId')
         .requiredOption('--depth <depth>', 'block depth', "12")
-        .requiredOption('--contract <contract>', 'contract address', "0xdac17f958d2ee523a2206206994597c13d831ec7")
-        .requiredOption('--ethHotWallet <ethHotWallet>', 'ethereum hotwallet address', "0x0000000000000000000000000000000000000000")
+        .requiredOption('--contract <contract>', 'contract address', "your contract address")
+        .requiredOption('--ethHotWallet <ethHotWallet>', 'ethereum hotwallet address', "your contract admin addr")
         .requiredOption('--config <config>', 'path of config file', "./config.json")
-        .requiredOption('--parami <parami>', 'ws address of parami', "ws://104.131.189.90:6969")
+        .requiredOption('--parami <parami>', 'ws address of parami', "param ws address")
         .action(async (from_block, args) => {
             await scan(args, Number(from_block));
         });
