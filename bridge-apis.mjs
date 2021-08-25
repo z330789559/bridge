@@ -33,6 +33,10 @@ async function main() {
         await redeem(program.opts().ws, keyring, admin, hash, eth_addr, parami_addr, value);
     });
 
+    program.command('desposit <admin> <eth_addr> <value>').action(async (admin,eth_addr, value) => {
+        await desposit(program.opts().ws, keyring, admin, eth_addr, value);
+    });
+
     await program.parseAsync(process.argv);
 }
 
@@ -42,6 +46,18 @@ async function redeem(ws, keyring, admin, hash, eth_addr, parami_addr, value) {
     admin = keyring.addFromUri(admin);
     let [a, b] = waitTx(moduleMetadata);
     await api.tx.bridge.redeem(hash, eth_addr, parami_addr, bnToBn(value).mul(unit)).signAndSend(admin, a);
+    await b();
+}
+
+async function desposit(ws, keyring, admin, eth_addr, value) {
+    console.log(ws,admin,eth_addr,value)
+    let api = await getApi(ws);
+    let moduleMetadata = await getModules(api);
+    console.log("kring")
+    admin = keyring.addFromUri("//Alice");
+    let [a, b] = waitTx(moduleMetadata);
+    console.log("tx")
+    await api.tx.bridge.desposit(eth_addr,bnToBn(value).mul(unit)).signAndSend(admin, a);
     await b();
 }
 

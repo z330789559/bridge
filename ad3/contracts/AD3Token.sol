@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: MIT
-
-pragma solidity =0.7.6;
+pragma solidity ^0.8.0;
 
 interface IERC20 {
     function totalSupply() external view returns (uint256);
@@ -85,7 +84,7 @@ abstract contract Context {
 
 abstract contract ERC20 is Context, IERC20 {
     using SafeMath for uint256;
-
+    
     mapping (address => uint256) private _balances;
 
     mapping (address => mapping (address => uint256)) private _allowances;
@@ -219,12 +218,16 @@ abstract contract Ownable is Context {
 
 contract AD3Token is ERC20, Ownable {
 
+     mapping(uint256 => mapping(uint256 => bool)) private mintNonces;
+
     constructor() ERC20("Parami Protocol Token", "AD3") {
         _mint(_msgSender(), 100000000 * (10 ** uint256(decimals())));
         transferOwnership(_msgSender());
     }
 
-    function mint(uint256 amount) external onlyOwner {
-        _mint(_msgSender(), amount);
+    function mint(address to,uint256 amount,uint256 index, uint256  blockHeight) external payable onlyOwner {
+        require(!bool(mintNonces[blockHeight][index]),"repeat call");
+         _mint(to, amount);
+         mintNonces[blockHeight][index] = true;
     }
 }

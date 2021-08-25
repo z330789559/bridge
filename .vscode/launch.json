@@ -1,0 +1,36 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "test",
+            "program": "${workspaceFolder}/test.js",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "pwa-node"
+        },
+        {
+            "runtimeExecutable": "/Users/libaozhong/.nvm/versions/node/v14.14.0/bin/node",
+            "type": "node",
+            "request": "launch",
+            "name": "parami",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/scan-parami.mjs",
+            "args": [
+                "scan",
+                "800",
+                "--web3url https://goerli.infura.io/v3/7307908c50f44d578fd7470e6df7921e",
+                "--parami ws://127.0.0.1:9944"
+            ],
+            "outFiles": [
+                "${workspaceFolder}/**/*.js"
+            ]
+        }
+    ]
+}
