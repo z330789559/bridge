@@ -2,3 +2,6 @@ node_modules
 .idea
 runtime_data.json
 *.log
+.vscode
+etherum.log
+prarami.log
