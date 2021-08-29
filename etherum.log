@@ -1,9 +1,0 @@
-Error: Provided address --ethHotWallet is invalid, the capitalization checksum test failed, or it's an indirect IBAN address which can't be converted.
-    at Object.inputAddressFormatter (/Users/libaozhong/parami/bridge/node_modules/web3-core-helpers/lib/formatters.js:403:11)
-    at Object.set [as address] (/Users/libaozhong/parami/bridge/node_modules/web3-eth-contract/lib/index.js:77:69)
-    at Contract (/Users/libaozhong/parami/bridge/node_modules/web3-eth-contract/lib/index.js:251:26)
-    at new Contract (/Users/libaozhong/parami/bridge/node_modules/web3-eth/lib/index.js:257:22)
-    at scan (file:///Users/libaozhong/parami/bridge/scan-ethereum.mjs:89:22)
-    at async Command.<anonymous> (file:///Users/libaozhong/parami/bridge/scan-ethereum.mjs:19:13)
-    at async Promise.all (index 0)
-    at async main (file:///Users/libaozhong/parami/bridge/scan-ethereum.mjs:21:5)
