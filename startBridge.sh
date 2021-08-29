@@ -2,9 +2,11 @@
 echo "start ......"
 
 
+
  set -a; source ./env_var; set +a;
 
 echo $web3url $parami $ethHotWallet $key $contract  $adcontract
+
 
 
 echo "start ethrenum scan"

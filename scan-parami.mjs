@@ -86,6 +86,7 @@ async function scan(opts) {
 // web3.eth.transactionConfirmationBlocks = 50;
     const contract = new web3.eth.Contract(JSON.parse((await fs.readFile('ad3/abis/ad1.json')).toString()), opts.contract);
 
+
     opts.depth = Number(opts.depth);
 
     let api = await getApi(opts.parami);

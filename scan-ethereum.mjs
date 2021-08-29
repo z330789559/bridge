@@ -70,6 +70,7 @@ async function scanBlock(opts, api, moduleMetadata, admin, web3, contract, block
                     console.log( event.returnValues.from,  event.returnValues.to,event.returnValues.value);
                     [a, b] = waitTx(moduleMetadata);
                     console.log(a,b)
+
                     await api.tx.bridge.redeem(
                         event.transactionHash,
                         event.returnValues.from,

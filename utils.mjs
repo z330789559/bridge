@@ -104,6 +104,7 @@ export async function getApi(dest) {
 		"Did":"Vec<u8>",
 		"ChainId": "u32",
 		"TAssetBalance": "u128",
+
 		"ExternalAddress":{
 			"btc":"Vec<u8>",
 			"eth":"Vec<u8>",
