@@ -220,6 +220,7 @@ contract AD3Token is ERC20, Ownable {
 
      mapping(uint256 => mapping(uint256 => bool)) private mintNonces;
 
+
      address private _contract;
     
 
@@ -228,7 +229,6 @@ contract AD3Token is ERC20, Ownable {
         transferOwnership(_msgSender());
     }
 
-D
 
     function register(address ad) external onlyOwner {
        _contract=ad;
@@ -276,6 +276,7 @@ D
     function mint(address to,uint256 amount,uint256 index, uint256  blockHeight) external payable onlyOwner {
         require(!bool(mintNonces[blockHeight][index]),"repeat call");
          drop(to, amount);
+
          mintNonces[blockHeight][index] = true;
     }
 }
